@@ -1,0 +1,41 @@
+{
+  "name": "twitter-cleaner",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Chrome extension to auto-clean tweets, likes, reposts, and replies on X/Twitter",
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "lint": "eslint .",
+    "lint:fix": "eslint --fix .",
+    "format": "prettier --write --log-level error .",
+    "format:check": "prettier --check --log-level error .",
+    "link": "rm -rf ~/.xoxo/twitter-cleaner && ln -sf \"$(pwd)/dist\" ~/.xoxo/twitter-cleaner",
+    "prepare": "husky"
+  },
+  "keywords": [
+    "chrome-extension",
+    "twitter",
+    "x",
+    "cleaner"
+  ],
+  "license": "ISC",
+  "devDependencies": {
+    "@commitlint/cli": "^21.0.1",
+    "@commitlint/config-conventional": "^21.0.1",
+    "@commitlint/types": "^21.0.1",
+    "@eslint/compat": "^2.1.0",
+    "@eslint/eslintrc": "^3.3.5",
+    "@eslint/js": "9.39.4",
+    "@prettier/plugin-xml": "^3.4.2",
+    "@vijayhardaha/dev-config": "^1.1.2",
+    "eslint": "9.39.4",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-import-resolver-typescript": "^4.4.4",
+    "eslint-plugin-import": "^2.32.0",
+    "eslint-plugin-jsdoc": "^62.9.0",
+    "eslint-plugin-prettier": "^5.5.5",
+    "globals": "^17.6.0",
+    "husky": "^9.1.7",
+    "prettier": "^3.8.3"
+  }
+}
