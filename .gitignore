@@ -1,0 +1,247 @@
+# =======================================================================
+# Git Ignore
+# =======================================================================
+# Purpose: Prevent build artifacts, local config, and sensitive
+#          credentials from entering version control.
+# Scope:   Next.js, Svelte, WordPress — npm, pnpm, yarn, bun.
+# Docs:    https://git-scm.com/docs/gitignore
+# =======================================================================
+
+# ----------------------------------------------------------------------
+# Dependency Managers (Node)
+# ----------------------------------------------------------------------
+# Large binary folders and lockfile caches.
+.pnp/
+.pnp.*
+
+# Bun
+.bun/
+
+# Node
+node_modules/
+
+# Yarn 2+ Zero-Installs
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/versions
+
+# ----------------------------------------------------------------------
+# Dependencies (Php)
+# ----------------------------------------------------------------------
+# Composer dependencies for WordPress / Laravel projects.
+languages/
+vendor/
+
+# ----------------------------------------------------------------------
+# Build & Compilation Output
+# ----------------------------------------------------------------------
+# Next.js / React
+.next/
+out/
+
+# Svelte
+.svelte-kit/
+
+# TypeScript
+*.tsbuildinfo
+next-env.d.ts
+
+# Bundler output
+build/
+dist/
+
+# ----------------------------------------------------------------------
+# Cache Directories
+# ----------------------------------------------------------------------
+# Esbuild / tsdown
+.cache/
+
+# Gulp
+.gulp/
+
+# Parcel
+.parcel-cache/
+
+# Phpcs
+.phpcs-cache
+
+# PostCSS
+.postcssrc
+
+# Rollup
+.rollup.cache/
+
+# Turborepo
+.turbo/
+
+# Vite / Vitest
+.vite/
+.vitest/
+
+# Webpack
+.webpack/
+
+# Linter / Formatter caches
+.eslintcache
+.stylelintcache
+
+# ----------------------------------------------------------------------
+# Testing & Coverage
+# ----------------------------------------------------------------------
+# Coverage reports
+.nyc_output/
+coverage/
+
+# Jest
+.jest/
+
+# Playwright
+blob-report/
+playwright-report/
+test-results/
+
+# Vitest
+vitest-results/
+
+# ----------------------------------------------------------------------
+# Editor & Ide Settings
+# ----------------------------------------------------------------------
+# These are developer-specific, not project-specific.
+# .vscode/
+.idea/
+.vscode-insiders/
+*.swp
+*.swo
+
+# ----------------------------------------------------------------------
+# System & Os Junk
+# ----------------------------------------------------------------------
+# macOS
+.AppleDouble
+.DS_Store
+.LSOverride
+.Spotlight-V100
+.Trashes
+
+# Windows
+$RECYCLE.BIN/
+Desktop.ini
+Thumbs.db
+ehthumbs.db
+
+# Linux
+# *~
+
+# ----------------------------------------------------------------------
+# Deployment (Platform-Specific)
+# ----------------------------------------------------------------------
+# Cloudflare
+.wrangler/
+
+# Netlify
+.netlify/
+
+# Vercel
+.vercel/
+
+# ----------------------------------------------------------------------
+# Log Files
+# ----------------------------------------------------------------------
+# Application, server, and framework logs across all project types.
+*.log
+
+# Node.js / npm / pnpm
+npm-debug.log*
+pnpm-debug.log*
+pnpm-error.log*
+
+# Yarn
+yarn-debug.log*
+yarn-error.log*
+
+# Bun
+bun-debug.log*
+bun-error.log*
+
+# Next.js / Nuxt
+.nuxt/
+
+# Python
+*.pyc
+*.pyo
+__pycache__/
+.tox/
+
+# PHP
+error_log
+php-error.log
+wp-content/debug.log
+wp-content/uploads/debug.log
+
+# Laravel / Symfony / Rails / Django
+storage/logs/
+log/
+logs/
+
+# PM2 / Forever / Process Managers
+*.log.*
+.pm2/
+
+# Syslog
+syslog/
+syslog.log
+
+# ----------------------------------------------------------------------
+# Temporary Files
+# ----------------------------------------------------------------------
+# Scratch data, prepared commands, local workflow artifacts.
+.tmp/
+tmp/
+
+# ----------------------------------------------------------------------
+# Ai Coding Tools
+# ----------------------------------------------------------------------
+# Local state, conversation history, and caches from AI agents.
+.agent/
+.agents/
+.claude/
+.cline/
+.codex/
+.copilot/
+.deepseek/
+.droid/
+.fallow/
+.gemini/
+.kilo/
+.kilocode/
+.mistral/
+.opencode/
+.qoder/
+.qwen/
+.vibe/
+
+# ----------------------------------------------------------------------
+# Seo & Generated Data
+# ----------------------------------------------------------------------
+# Auto-generated files that don't need version control.
+/public/robots.txt
+/public/sitemap*
+*sitemap*.xml
+
+# ----------------------------------------------------------------------
+# Environment & Secrets
+# ----------------------------------------------------------------------
+# WARNING: Do not remove these unless you have an encryption layer.
+.env
+.env.*
+!.env.example
+*.pem
+
+# ----------------------------------------------------------------------
+# Ai Instruction Files (Track These)
+# ----------------------------------------------------------------------
+# Project-level instruction files should be COMMITTED, not ignored.
+# CLAUDE.md, AGENTS.md, .cursorrules, .kilocode/, .qoder/ (config only)
+# Do NOT add these to .gitignore.

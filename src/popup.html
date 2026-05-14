@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Twitter Auto Cleaner</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Epilogue:wght@400;500;600;700&family=Lora:wght@700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="vendor/fontawesome.min.css" />
+    <link rel="stylesheet" href="popup.css" />
+  </head>
+  <body>
+    <div class="container">
+      <h1><i class="fas fa-tools"></i> Twitter Cleaner</h1>
+
+      <div class="section">
+        <div class="section-title">Delete Tweets</div>
+        <div class="btn-group">
+          <button id="startDelete" class="btn"><i class="fas fa-trash"></i> Delete All Tweets</button>
+          <button id="startDeleteReplies" class="btn"><i class="fas fa-comment"></i> Delete Replies</button>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Clean Activity</div>
+        <div class="btn-group">
+          <button id="startUnlike" class="btn"><i class="fas fa-heart"></i> Unlike All Likes</button>
+          <button id="startUnrepost" class="btn"><i class="fas fa-repeat"></i> Remove Reposts</button>
+        </div>
+      </div>
+
+      <div id="stats" class="section stats-section">
+        <div class="section-title">Progress</div>
+        <div class="stats-grid">
+          <div class="stat-item">
+            <span class="stat-label">Status</span>
+            <span id="status" class="stat-value">Ready</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">Time</span>
+            <span id="timeElapsed" class="stat-value">0:00</span>
+          </div>
+
+          <div class="stat-item" id="deleteStatsGroup">
+            <span class="stat-label">Deleted</span>
+            <span id="deletedCount" class="stat-value">0</span>
+          </div>
+          <div class="stat-item" id="foundStatsGroup">
+            <span class="stat-label">Found</span>
+            <span id="foundCount" class="stat-value">0</span>
+          </div>
+
+          <div class="stat-item hidden" id="unlikeStatsGroup">
+            <span class="stat-label">Unliked</span>
+            <span id="unlikeCount" class="stat-value">0 / 0</span>
+          </div>
+
+          <div class="stat-item hidden" id="unrepostStatsGroup">
+            <span class="stat-label">Unreposted</span>
+            <span id="unrepostCount" class="stat-value">0 / 0</span>
+          </div>
+
+          <div class="stat-item hidden" id="repliesStatsGroup">
+            <span class="stat-label">Replies Deleted</span>
+            <span id="repliesDeletedCount" class="stat-value">0 / 0</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="btn-group">
+        <button id="stopAction" class="btn btn-danger" disabled><i class="fas fa-xmark"></i> Stop</button>
+      </div>
+    </div>
+
+    <script src="popup.js"></script>
+  </body>
+</html>
