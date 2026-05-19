@@ -1,8 +1,7 @@
 {
   "name": "twitter-cleaner",
   "version": "1.0.0",
-  "private": true,
-  "description": "Chrome extension to auto-clean tweets, likes, reposts, and replies on X/Twitter",
+  "description": "Deletes tweets, replies, likes and reposts on X/Twitter with one click",
   "scripts": {
     "build": "node scripts/build.mjs",
     "lint": "eslint .",
@@ -18,7 +17,19 @@
     "x",
     "cleaner"
   ],
-  "license": "ISC",
+  "license": "MIT",
+  "author": {
+    "name": "Vijay Hardaha",
+    "url": "https://github.com/vijayhardaha"
+  },
+  "homepage": "https://github.com/vijayhardaha/twitter-cleaner-chrome-extension",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vijayhardaha/twitter-cleaner-chrome-extension.git"
+  },
+  "bugs": {
+    "url": "https://github.com/vijayhardaha/twitter-cleaner-chrome-extension/issues"
+  },
   "devDependencies": {
     "@commitlint/cli": "^21.0.1",
     "@commitlint/config-conventional": "^21.0.1",
