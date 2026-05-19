@@ -3,6 +3,18 @@
  * Injected into X/Twitter pages to handle tweet deletion, unliking, unreposting, and reply deletion.
  */
 
+// Delay constants (in ms)
+const BUTTON_CLICK_DELAY = 500;
+const SCROLL_VIEW_DELAY = 200;
+const CONFIRM_DELAY = 300;
+const LOAD_NEW_TWEETS_DELAY = 1000;
+
+// DOM utility functions
+const qs = (selector, node = document) => node.querySelector(selector);
+const qsa = (selector, node = document) => node.querySelectorAll(selector);
+const scrollToBottom = () => window.scrollTo(0, document.body.scrollHeight);
+const scrollToTweet = (element) => element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
 let deletionInterval = null;
 let actionInterval = null;
 /** @type {{ deleted: number, found: number }} */
@@ -18,6 +30,7 @@ let currentAction = null;
 
 let TARGET_USERNAME = '';
 chrome.storage.local.get(['twitterUsername'], (result) => {
+  // Check if twitterUsername exists in storage
   if (result.twitterUsername) {
     TARGET_USERNAME = result.twitterUsername;
   }
@@ -76,11 +89,14 @@ function getStats() {
  * Clears interval/timeout identifiers and flags, then clears the current action.
  */
 function stopAll() {
+  // Check if deletion interval is active
   if (deletionInterval) {
     // Clear interval if numeric ID, otherwise just reset flag
     clearInterval(deletionInterval);
     deletionInterval = false;
   }
+
+  // Check if action interval is active
   if (actionInterval) {
     // Clear both interval and timeout IDs; also handle boolean flag for recursive loop
     clearTimeout(actionInterval);
@@ -102,22 +118,31 @@ function isTargetUserTweet(tweetElement) {
   const spans = tweetElement.querySelectorAll('span');
   let usernameSpan = null;
   for (const s of spans) {
+    // Check if span text matches target handle
     if (s.textContent && s.textContent.trim() === targetHandle) {
       usernameSpan = s;
       break;
     }
   }
+
+  // Check if usernameSpan was found
   if (!usernameSpan) {
     return false;
   }
+
   // Ensure the span is inside an anchor linking to the user's profile
   const link = usernameSpan.closest('a');
+
+  // Check if link to profile exists
   if (!link) {
     return false;
   }
+
+  // Verify link href matches target username
   if (link.getAttribute('href') !== `/${TARGET_USERNAME}`) {
     return false;
   }
+
   // Ensure the anchor is within an element marked as User-Name
   return !!link.closest('[data-testid="User-Name"]');
 }
@@ -132,6 +157,7 @@ function startDeletion() {
   if (deletionInterval || actionInterval) {
     return;
   }
+
   currentAction = 'delete';
 
   twitterDeleterStats = { deleted: 0, found: 0 };
@@ -142,48 +168,58 @@ function startDeletion() {
   const delay = (ms) => new Promise((res) => setTimeout(res, ms));
 
   const process = async () => {
+    // Check if deletion interval is still active
     if (!deletionInterval) {
       return;
     }
 
-    const moreButtons = document.querySelectorAll('[aria-label="More"]');
+    const moreButtons = qsa('[aria-label="More"]');
     twitterDeleterStats.found = moreButtons.length;
 
     for (const button of moreButtons) {
+      // Check if deletion interval is still active
       if (!deletionInterval) {
         return;
       }
+
       try {
         const tweetElement = button.closest('article');
+
+        // Check if tweet element exists
         if (!tweetElement) {
           continue;
         }
+
+        // Check if tweet belongs to target user
         if (!isTargetUserTweet(tweetElement)) {
           continue;
         }
 
         // Capture tweet metadata before deletion
         const tweetData = {
-          date: tweetElement.querySelector('time')?.getAttribute('datetime') || '',
-          text: tweetElement.querySelector('[data-testid="tweetText"]')?.textContent || '',
-          likes: tweetElement.querySelector('[data-testid="like"]')?.textContent || '0',
-          retweets: tweetElement.querySelector('[data-testid="retweet"]')?.textContent || '0',
-          url: tweetElement.querySelector('time')?.parentElement?.getAttribute('href') || '',
+          date: qs('time', tweetElement)?.getAttribute('datetime') || '',
+          text: qs('[data-testid="tweetText"]', tweetElement)?.textContent || '',
+          likes: qs('[data-testid="like"]', tweetElement)?.textContent || '0',
+          retweets: qs('[data-testid="retweet"]', tweetElement)?.textContent || '0',
+          url: qs('time', tweetElement)?.parentElement?.getAttribute('href') || '',
         };
 
         button.click();
-        await delay(500);
+        await delay(BUTTON_CLICK_DELAY);
 
-        const menuItems = document.querySelectorAll('[role="menuitem"]');
+        const menuItems = qsa('[role="menuitem"]');
         const deleteButton = Array.from(menuItems).find((item) => item.textContent.includes('Delete'));
+
+        // Check if delete button exists in menu
         if (deleteButton) {
           // Ensure tweet is in view before deletion
-          tweetElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
-          await delay(100);
+          scrollToTweet(tweetElement);
+          await delay(SCROLL_VIEW_DELAY);
           deleteButton.click();
-          await delay(300);
+          await delay(CONFIRM_DELAY);
 
-          const confirmButton = document.querySelector('[data-testid="confirmationSheetConfirm"]');
+          const confirmButton = qs('[data-testid="confirmationSheetConfirm"]');
+          // Confirm deletion action
           if (confirmButton) {
             confirmButton.click();
             twitterDeleterStats.deleted++;
@@ -194,8 +230,14 @@ function startDeletion() {
         console.error('Error during deletion:', error);
       }
     }
-    window.scrollTo(0, document.body.scrollHeight);
-    await delay(2000);
+
+    // Load more tweets if no more actions available
+    if (moreButtons.length === 0) {
+      scrollToBottom();
+    }
+
+    // Wait before next iteration
+    await delay(LOAD_NEW_TWEETS_DELAY);
     await process();
   };
 
@@ -214,35 +256,50 @@ function startUnliking() {
 
   // Recursive async unlike loop using await delay
   actionInterval = true;
+
   const delay = (ms) => new Promise((res) => setTimeout(res, ms));
   const process = async () => {
     if (!actionInterval) {
       return;
     }
+
     // Find all unlike buttons currently in view
-    const likeButtons = document.querySelectorAll('[data-testid="unlike"]');
+    const likeButtons = qsa('[data-testid="unlike"]');
     actionStats.foundLikes = likeButtons.length;
     for (const button of likeButtons) {
       if (!actionInterval) {
         return;
       }
+
       try {
         const tweetElement = button.closest('article');
+        // Scroll tweet into view before action
         if (tweetElement) {
-          tweetElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
-          await delay(100);
+          scrollToTweet(tweetElement);
+          await delay(SCROLL_VIEW_DELAY);
         }
+
+        // Perform unlike action
         button.click();
         actionStats.unlikes++;
-        await delay(300);
+        await delay(BUTTON_CLICK_DELAY);
       } catch (error) {
         console.error('Error during unlike:', error);
       }
     }
-    window.scrollTo(0, document.body.scrollHeight);
-    await delay(1000);
+
+    // Load more tweets if no like buttons found
+    // Load more tweets if no like buttons found
+    if (likeButtons.length === 0) {
+      scrollToBottom();
+    }
+
+    // Wait before next iteration
+    await delay(LOAD_NEW_TWEETS_DELAY);
     await process();
   };
+
+  // Start the recursive process
   process();
 }
 
@@ -255,25 +312,26 @@ function startUnreposting() {
   if (deletionInterval || actionInterval) {
     return;
   }
+
   currentAction = 'unrepost';
 
   actionStats = { ...actionStats, unreposts: 0, foundReposts: 0 };
 
   // Recursive async unrepost loop using await delay
   actionInterval = true;
+
   const delay = (ms) => new Promise((res) => setTimeout(res, ms));
   const process = async () => {
     if (!actionInterval) {
       return;
     }
+
     // Locate repost buttons where tweet indicates "You reposted"
-    const repostSpans = Array.from(document.querySelectorAll('span')).filter(
-      (s) => s.textContent && s.textContent.includes('You reposted')
-    );
+    const repostSpans = Array.from(qsa('span')).filter((s) => s.textContent && s.textContent.includes('You reposted'));
     const repostButtons = repostSpans
       .map((span) => span.closest('article'))
       .filter(Boolean)
-      .map((article) => article.querySelector('button[data-testid="unretweet"][type="button"]'))
+      .map((article) => qs('button[data-testid="unretweet"][type="button"]', article))
       .filter(Boolean);
     actionStats.foundReposts = repostButtons.length;
     console.log('Unrepost detection - found', repostButtons.length, 'buttons');
@@ -282,29 +340,43 @@ function startUnreposting() {
       if (!actionInterval) {
         return;
       }
+
       try {
         const tweetElement = button.closest('article');
         if (tweetElement) {
-          tweetElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
-          await delay(100);
+          scrollToTweet(tweetElement);
+          await delay(SCROLL_VIEW_DELAY);
         }
+
+        // Log unrepost action
         console.log('Clicking unrepost button for tweet');
         button.click();
-        await delay(200);
-        const confirmButton = document.querySelector('[data-testid="unretweetConfirm"]');
+        await delay(BUTTON_CLICK_DELAY);
+        const confirmButton = qs('[data-testid="unretweetConfirm"]');
+
+        // Confirm unrepost action
         if (confirmButton) {
           confirmButton.click();
           actionStats.unreposts++;
         }
-        await delay(500);
+
+        await delay(CONFIRM_DELAY);
       } catch (error) {
         console.error('Error during unrepost:', error);
       }
     }
-    window.scrollTo(0, document.body.scrollHeight);
-    await delay(1000);
+
+    // Load more tweets if no repost buttons found
+    if (repostButtons.length === 0) {
+      scrollToBottom();
+    }
+
+    // Wait before next iteration
+    await delay(LOAD_NEW_TWEETS_DELAY);
     await process();
   };
+
+  // Start the recursive process
   process();
 }
 
@@ -318,8 +390,10 @@ function startDeletingReplies() {
   if (deletionInterval || actionInterval) {
     return;
   }
+
   currentAction = 'deleteReplies';
 
+  // Initialize reply deletion statistics
   actionStats = { ...actionStats, repliesDeleted: 0, repliesFound: 0 };
   deletedReplies = [];
 
@@ -328,20 +402,26 @@ function startDeletingReplies() {
   const delay = (ms) => new Promise((res) => setTimeout(res, ms));
 
   const process = async () => {
+    // Check if action interval is still active
     if (!actionInterval) {
       return;
-    } // stopped
+    }
 
     // Find all "More" buttons on reply tweets
-    const moreButtons = document.querySelectorAll('[aria-label="More"]');
+    const moreButtons = qsa('[aria-label="More"]');
     const replyTweets = Array.from(moreButtons).filter((button) => {
       const tweetElement = button.closest('article');
+
+      // Check if tweet element exists
       if (!tweetElement) {
         return false;
       }
+
+      // Check if tweet belongs to target user
       if (!isTargetUserTweet(tweetElement)) {
         return false;
       }
+
       return true;
     });
 
@@ -351,42 +431,52 @@ function startDeletingReplies() {
       if (!actionInterval) {
         return;
       }
+
       try {
         const tweetElement = button.closest('article');
         // Capture reply tweet metadata before deletion
         const replyData = {
-          date: tweetElement.querySelector('time')?.getAttribute('datetime') || '',
-          text: tweetElement.querySelector('[data-testid="tweetText"]')?.textContent || '',
-          url: tweetElement.querySelector('time')?.parentElement?.getAttribute('href') || '',
+          date: qs('time', tweetElement)?.getAttribute('datetime') || '',
+          text: qs('[data-testid="tweetText"]', tweetElement)?.textContent || '',
+          url: qs('time', tweetElement)?.parentElement?.getAttribute('href') || '',
         };
+
         button.click();
-        await delay(500);
-        const menuItems = document.querySelectorAll('[role="menuitem"]');
+        await delay(BUTTON_CLICK_DELAY);
+        const menuItems = qsa('[role="menuitem"]');
         const deleteButton = Array.from(menuItems).find((item) => item.textContent.includes('Delete'));
+
+        // Check if delete button exists in menu
         if (deleteButton) {
           // Scroll tweet into view before initiating delete action
-          tweetElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
-          await delay(100); // allow scrolling to settle
+          scrollToTweet(tweetElement);
+          await delay(SCROLL_VIEW_DELAY);
+
           deleteButton.click();
-          await delay(300);
-          const confirmButton = document.querySelector('[data-testid="confirmationSheetConfirm"]');
+          await delay(CONFIRM_DELAY);
+
+          const confirmButton = qs('[data-testid="confirmationSheetConfirm"]');
+          // Confirm deletion action
           if (confirmButton) {
             confirmButton.click();
             actionStats.repliesDeleted++;
             deletedReplies.push(replyData);
           }
         }
-        await delay(500);
+
+        await delay(BUTTON_CLICK_DELAY);
       } catch (error) {
         console.error('Error during reply deletion:', error);
       }
     }
 
+    // Load more tweets if no reply buttons found
     if (replyTweets.length === 0) {
-      window.scrollTo(0, document.body.scrollHeight);
+      scrollToBottom();
     }
-    // Wait 2 seconds then recurse
-    await delay(2000);
+
+    // Wait before next iteration
+    await delay(LOAD_NEW_TWEETS_DELAY);
     await process();
   };
 
