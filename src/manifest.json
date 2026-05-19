@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
-  "name": "Twitter Auto Cleaner",
-  "version": "1.0.0",
+  "name": "X/Twitter Auto Cleaner",
+  "version": "1.0.1",
   "description": "Automatically delete tweets, unlikes, unreposts, and delete replies on X/Twitter",
   "permissions": ["activeTab", "scripting", "storage"],
   "host_permissions": ["https://x.com/*", "https://twitter.com/*"],

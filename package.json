@@ -1,6 +1,6 @@
 {
   "name": "twitter-cleaner",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Deletes tweets, replies, likes and reposts on X/Twitter with one click",
   "scripts": {
     "build": "node scripts/build.mjs",
