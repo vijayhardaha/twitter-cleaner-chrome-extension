@@ -1,14 +1,12 @@
-# Twitter Cleaner – Chrome Extension
-
-[GitHub Repository](https://github.com/vijayhardaha/twitter-cleaner-chrome-extension)
+# X/Twitter Cleaner – Chrome Extension
 
 A one‑click tool that deletes your tweets, replies, likes, and reposts on X/Twitter, showing live progress and allowing you to stop any operation instantly.
 
-<img src="/assets/logo.png" alt="Twitter Cleaner Logo" width="200"/>
+<img src="/assets/logo.png" alt="X/Twitter Cleaner Logo" width="200"/>
 
 ## Overview
 
-Twitter Cleaner is a user‑friendly Chrome extension that helps you quickly tidy up your X/Twitter account. With a single click you can:
+X/Twitter Cleaner is a user‑friendly Chrome extension that helps you quickly tidy up your X/Twitter account. With a single click you can:
 
 - **Delete All Tweets** – removes every tweet you’ve posted.
 - **Delete Replies** – clears all replies you’ve written.
@@ -26,13 +24,13 @@ The popup shows live statistics (items processed, elapsed time) while the extens
    - Open `chrome://extensions/`.
    - Turn **Developer mode** on (top‑right toggle).
    - Click **Load unpacked** and select the extracted `dist/` folder.
-   - The “Twitter Cleaner” icon will appear in your toolbar (you can pin it via the puzzle‑piece menu).
+   - The “X/Twitter Cleaner” icon will appear in your toolbar (you can pin it via the puzzle‑piece menu).
 
 That’s all – the extension is now ready to use.
 
 ## How to Use
 
-1. Click the **Twitter Cleaner** icon to open the popup.
+1. Click the **X/Twitter Cleaner** icon to open the popup.
 2. Choose the desired action (e.g., “Delete All Tweets”).
 3. The extension will navigate to the appropriate page, perform the cleanup, and display live counters.
 4. Press **Stop** at any time to abort the current operation.
