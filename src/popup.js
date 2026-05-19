@@ -90,13 +90,11 @@ function updateStats(status) {
   document.getElementById('repliesStatsGroup').classList.toggle('hidden', currentAction !== 'deleteReplies');
 
   if (currentAction === 'unlike') {
-    document.getElementById('unlikeCount').textContent = `${actionStats.unlikes} / ${actionStats.foundLikes || 0}`;
+    document.getElementById('unlikeCount').textContent = `${actionStats.unlikes}`;
   } else if (currentAction === 'unrepost') {
-    document.getElementById('unrepostCount').textContent =
-      `${actionStats.unreposts} / ${actionStats.foundReposts || 0}`;
+    document.getElementById('unrepostCount').textContent = `${actionStats.unreposts}`;
   } else if (currentAction === 'deleteReplies') {
-    document.getElementById('repliesDeletedCount').textContent =
-      `${actionStats.repliesDeleted} / ${actionStats.repliesFound || 0}`;
+    document.getElementById('repliesDeletedCount').textContent = `${actionStats.repliesDeleted}`;
   } else if (currentAction === 'delete') {
     document.getElementById('deletedCount').textContent = stats.deleted;
     document.getElementById('foundCount').textContent = stats.found;
@@ -200,7 +198,7 @@ document.addEventListener('DOMContentLoaded', () => {
     stopActionBtn.disabled = !disabled;
   }
 
-  document.getElementById('stats').style.display = 'flex';
+  document.getElementById('stats').style.display = 'block';
   document.getElementById('status').textContent = 'Ready';
 
   statsInterval = setInterval(async () => {
@@ -222,16 +220,23 @@ document.addEventListener('DOMContentLoaded', () => {
               actionStats = { ...actionStats, ...response.actionStats };
             }
 
-            const statusText =
-              currentAction === 'unlike'
-                ? 'Unliking...'
-                : currentAction === 'unrepost'
-                  ? 'Unreposting...'
-                  : currentAction === 'deleteReplies'
-                    ? 'Deleting replies...'
-                    : currentAction === 'delete'
-                      ? 'Deleting...'
-                      : 'Processing...';
+            let statusText;
+            switch (currentAction) {
+              case 'unlike':
+                statusText = 'Unliking...';
+                break;
+              case 'unrepost':
+                statusText = 'Unreposting...';
+                break;
+              case 'deleteReplies':
+                statusText = 'Deleting replies...';
+                break;
+              case 'delete':
+                statusText = 'Deleting...';
+                break;
+              default:
+                statusText = 'Processing...';
+            }
             updateStats(statusText);
           }
         });

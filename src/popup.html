@@ -7,72 +7,104 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Epilogue:wght@400;500;600;700&family=Lora:wght@700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Google+Sans:ital,opsz,wght@0,17..18,400..700;1,17..18,400..700&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="vendor/fontawesome.min.css" />
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="popup.css" />
   </head>
-  <body>
-    <div class="container">
-      <h1><i class="fas fa-tools"></i> Twitter Cleaner</h1>
 
-      <div class="section">
-        <div class="section-title">Delete Tweets</div>
-        <div class="btn-group">
-          <button id="startDelete" class="btn"><i class="fas fa-trash"></i> Delete All Tweets</button>
-          <button id="startDeleteReplies" class="btn"><i class="fas fa-comment"></i> Delete Replies</button>
+  <body class="bg-gray-50 text-gray-800 p-4 text-base">
+    <div class="max-w-xs mx-auto">
+      <h1 class="text-2xl font-bold mb-2 flex items-center">
+        <img src="icons/icon-256.png" alt="Twitter Cleaner" class="w-8 h-8 mr-2" />
+        <span>Twitter Cleaner</span>
+        <span class="text-sm text-gray-500 ml-2">v1.0.0</span>
+      </h1>
+      <hr class="mb-4 mt-2 border-gray-300" />
+
+      <!-- Delete Tweets Section -->
+      <section class="mb-4">
+        <h2 class="font-semibold text-gray-800 mb-2">Delete Tweets</h2>
+        <div class="grid grid-cols-2 gap-2">
+          <button id="startDelete" class="button"><span class="relative z-10">Delete All Tweets</span></button>
+          <button id="startDeleteReplies" class="button"><span class="relative z-10">Delete Replies</span></button>
         </div>
-      </div>
+      </section>
 
-      <div class="section">
-        <div class="section-title">Clean Activity</div>
-        <div class="btn-group">
-          <button id="startUnlike" class="btn"><i class="fas fa-heart"></i> Unlike All Likes</button>
-          <button id="startUnrepost" class="btn"><i class="fas fa-repeat"></i> Remove Reposts</button>
+      <!-- Clean Activity Section -->
+      <section class="mb-4">
+        <h2 class="font-semibold text-gray-800 mb-2">Clean Activity</h2>
+        <div class="grid grid-cols-2 gap-2">
+          <button id="startUnlike" class="button"><span class="relative z-10">Unlike All Likes</span></button>
+          <button id="startUnrepost" class="button"><span class="relative z-10">Remove Reposts</span></button>
         </div>
-      </div>
+      </section>
 
-      <div id="stats" class="section stats-section">
-        <div class="section-title">Progress</div>
-        <div class="stats-grid">
-          <div class="stat-item">
-            <span class="stat-label">Status</span>
-            <span id="status" class="stat-value">Ready</span>
+      <!-- Stats Section -->
+      <section id="stats" class="mb-4">
+        <h2 class="font-semibold text-gray-800 mb-2">Progress</h2>
+        <div class="border-2 border-gray-500 p-4 pt-3 divide-y divide-gray-200 text-sm flex flex-col gap-1">
+          <div class="flex justify-between items-center pt-1">
+            <span class="font-semibold text-gray-500">Status</span>
+            <span id="status" class="text-gray-800">Ready</span>
           </div>
-          <div class="stat-item">
-            <span class="stat-label">Time</span>
-            <span id="timeElapsed" class="stat-value">0:00</span>
+          <div class="flex justify-between items-center pt-1">
+            <span class="font-semibold text-gray-500">Time</span>
+            <span id="timeElapsed" class="text-gray-800">0:00</span>
           </div>
-
-          <div class="stat-item" id="deleteStatsGroup">
-            <span class="stat-label">Deleted</span>
-            <span id="deletedCount" class="stat-value">0</span>
+          <div id="deleteStatsGroup" class="flex justify-between items-center pt-1">
+            <span class="font-semibold text-gray-500">Deleted</span>
+            <span id="deletedCount" class="text-gray-800">0</span>
           </div>
-          <div class="stat-item" id="foundStatsGroup">
-            <span class="stat-label">Found</span>
-            <span id="foundCount" class="stat-value">0</span>
+          <div id="foundStatsGroup" class="flex justify-between items-center pt-1">
+            <span class="font-semibold text-gray-500">Found</span>
+            <span id="foundCount" class="text-gray-800">0</span>
           </div>
-
-          <div class="stat-item hidden" id="unlikeStatsGroup">
-            <span class="stat-label">Unliked</span>
-            <span id="unlikeCount" class="stat-value">0 / 0</span>
+          <div id="unlikeStatsGroup" class="hidden flex justify-between items-center pt-1">
+            <span class="font-semibold text-gray-500">Unliked</span>
+            <span id="unlikeCount" class="text-gray-800">0</span>
           </div>
-
-          <div class="stat-item hidden" id="unrepostStatsGroup">
-            <span class="stat-label">Unreposted</span>
-            <span id="unrepostCount" class="stat-value">0 / 0</span>
+          <div id="unrepostStatsGroup" class="hidden flex justify-between items-center pt-1">
+            <span class="font-semibold text-gray-500">Unreposted</span>
+            <span id="unrepostCount" class="text-gray-800">0</span>
           </div>
-
-          <div class="stat-item hidden" id="repliesStatsGroup">
-            <span class="stat-label">Replies Deleted</span>
-            <span id="repliesDeletedCount" class="stat-value">0 / 0</span>
+          <div id="repliesStatsGroup" class="hidden flex justify-between items-center pt-1">
+            <span class="font-semibold text-gray-500">Replies Deleted</span>
+            <span id="repliesDeletedCount" class="text-gray-800">0</span>
           </div>
         </div>
-      </div>
+      </section>
 
-      <div class="btn-group">
-        <button id="stopAction" class="btn btn-danger" disabled><i class="fas fa-xmark"></i> Stop</button>
+      <!-- Stop Button -->
+      <div class="flex justify-center">
+        <button id="stopAction" class="button w-full" disabled><span class="relative z-10">Stop</span></button>
+      </div>
+      <!-- Divider -->
+      <hr class="my-4 border-gray-300" />
+      <!-- Author Bar -->
+      <div class="flex justify-between items-center text-sm mt-2">
+        <div class="text-gray-900 font-medium">Vijay Hardaha</div>
+        <div class="flex space-x-2">
+          <a
+            href="https://github.com/vijayhardaha"
+            target="_blank"
+            class="px-2 py-1 bg-gray-900 text-white hover:bg-gray-800 text-xs font-medium"
+            >GitHub</a
+          >
+          <a
+            href="https://x.com/vijayhardaha"
+            target="_blank"
+            class="px-2 py-1 bg-black text-white hover:bg-gray-800 text-xs font-medium"
+            >X</a
+          >
+          <a
+            href="https://instagram.com/vegan.vijay"
+            target="_blank"
+            class="px-2 py-1 bg-pink-600 text-white hover:bg-pink-700 text-xs font-medium"
+            >Instagram</a
+          >
+        </div>
       </div>
     </div>
 
