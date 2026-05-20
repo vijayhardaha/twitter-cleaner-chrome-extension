@@ -17,6 +17,8 @@ const scrollToTweet = (element) => element.scrollIntoView({ behavior: 'smooth', 
 
 let deletionInterval = null;
 let actionInterval = null;
+let unfollowObserver = null;
+let unfollowObserverActive = false;
 /** @type {{ deleted: number, found: number }} */
 let twitterDeleterStats = { deleted: 0, found: 0 };
 /** @type {Array<{ date: string, text: string, likes: string, retweets: string, url: string }>} */
@@ -24,7 +26,16 @@ let deletedTweets = [];
 /** @type {Array<{ date: string, text: string, url: string }>} */
 let deletedReplies = [];
 /** @type {{ unlikes: number, foundLikes: number, unreposts: number, foundReposts: number, repliesDeleted: number, repliesFound: number }} */
-let actionStats = { unlikes: 0, foundLikes: 0, unreposts: 0, foundReposts: 0, repliesDeleted: 0, repliesFound: 0 };
+let actionStats = {
+  unlikes: 0,
+  foundLikes: 0,
+  unreposts: 0,
+  foundReposts: 0,
+  repliesDeleted: 0,
+  repliesFound: 0,
+  unfollowed: 0,
+  foundFollow: 0,
+};
 /** @type {string|null} */
 let currentAction = null;
 
@@ -53,6 +64,10 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     case 'startDeleteReplies':
       startDeletingReplies();
       sendResponse({ status: 'started', action: 'deleteReplies' });
+      break;
+    case 'startUnfollow':
+      startUnfollowing();
+      sendResponse({ status: 'started', action: 'unfollow' });
       break;
     case 'stop':
       stopAll();
@@ -102,7 +117,70 @@ function stopAll() {
     clearTimeout(actionInterval);
     actionInterval = false; // stop recursive process if it's a boolean flag
   }
+  stopUnfollowObserver();
   currentAction = null;
+}
+
+function checkAndClickUnfollowConfirm() {
+  const alertDialog = qs('[role="alertdialog"]');
+  if (!alertDialog) {
+    return false;
+  }
+
+  const confirmButton = qs('button[data-testid="confirmationSheetConfirm"][role="button"]', alertDialog);
+  if (!confirmButton) {
+    return false;
+  }
+
+  const isVisible = confirmButton.offsetParent !== null;
+  const isEnabled = !confirmButton.disabled;
+
+  if (isVisible && isEnabled) {
+    setTimeout(() => {
+      try {
+        confirmButton.click();
+        actionStats.unfollowed++;
+      } catch (error) {
+        console.error('Error clicking unfollow confirmation:', error);
+      }
+    }, BUTTON_CLICK_DELAY);
+    return true;
+  }
+
+  return false;
+}
+
+function startUnfollowObserver() {
+  if (unfollowObserverActive) {
+    return;
+  }
+
+  checkAndClickUnfollowConfirm();
+
+  unfollowObserver = new MutationObserver(() => {
+    if (!actionInterval || currentAction !== 'unfollow') {
+      return;
+    }
+    checkAndClickUnfollowConfirm();
+  });
+
+  unfollowObserver.observe(document.body, {
+    childList: true,
+    subtree: true,
+    attributes: true,
+    attributeFilter: ['role', 'data-testid', 'disabled', 'style', 'class'],
+  });
+  unfollowObserverActive = true;
+}
+
+function stopUnfollowObserver() {
+  if (unfollowObserver) {
+    unfollowObserver.disconnect();
+    unfollowObserver = null;
+  }
+  if (unfollowObserverActive) {
+    unfollowObserverActive = false;
+  }
 }
 
 /**
@@ -482,4 +560,19 @@ function startDeletingReplies() {
 
   // Start the recursive process
   process();
+}
+
+/**
+ * Starts manual-assist unfollow mode.
+ * User clicks unfollow manually; observer confirms dialog when it appears.
+ */
+function startUnfollowing() {
+  if (deletionInterval || actionInterval) {
+    return;
+  }
+
+  currentAction = 'unfollow';
+  actionStats = { ...actionStats, unfollowed: 0, foundFollow: 0 };
+  actionInterval = true;
+  startUnfollowObserver();
 }
