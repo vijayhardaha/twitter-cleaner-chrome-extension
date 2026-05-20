@@ -1,6 +1,6 @@
 # X/Twitter Cleaner – Chrome Extension
 
-A one‑click tool that deletes your tweets, replies, likes, and reposts on X/Twitter, showing live progress and allowing you to stop any operation instantly.
+A one‑click tool that deletes your tweets, replies, likes, and reposts on X/Twitter, with manual-assist unfollow confirmation support, live progress, and instant stop.
 
 <img src="/assets/logo.png" alt="X/Twitter Cleaner Logo" width="200"/>
 
@@ -12,6 +12,7 @@ X/Twitter Cleaner is a user‑friendly Chrome extension that helps you quickly t
 - **Delete Replies** – clears all replies you’ve written.
 - **Unlike All Likes** – unlikes every tweet you’ve liked.
 - **Remove Reposts** – removes all retweets/reposts you’ve made.
+- **Unfollow Assist** – you click each unfollow button manually; the extension auto-confirms the unfollow popup.
 - **Stop** – cancels any ongoing cleanup.
 
 The popup shows live statistics (items processed, elapsed time) while the extension works.
@@ -35,11 +36,22 @@ That’s all – the extension is now ready to use.
 3. The extension will navigate to the appropriate page, perform the cleanup, and display live counters.
 4. Press **Stop** at any time to abort the current operation.
 
+### Unfollow Assist (Manual)
+
+1. Open the popup and click **Unfollow**.
+2. The extension navigates to your **Following** page and starts listening for the unfollow confirmation popup.
+3. Click **Following** buttons manually on the page.
+4. When the confirmation popup appears, the extension clicks **Confirm** automatically.
+5. Press **Stop** to disable popup listening.
+
+Note: The extension does **not** auto-click unfollow/following buttons. Unfollow button clicks are always manual.
+
 All processing happens locally in your browser; no data is sent to external servers.
 
 ## Features
 
 - **One‑click cleanup** for tweets, replies, likes, and reposts.
+- **Manual unfollow safety**: confirmation-only automation for unfollow flow.
 - **Live progress** with counters and elapsed time.
 - **Stop button** to cancel any running task.
 - **No external dependencies** – runs entirely within Chrome.
