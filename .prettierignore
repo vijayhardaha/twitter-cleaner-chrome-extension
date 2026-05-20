@@ -86,23 +86,43 @@ static/
 # ----------------------------------------------------------------------
 # Ai Coding Tools
 # ----------------------------------------------------------------------
-.agent/
-.agents/
-.claude/
-.codex/
-.cline/
-.copilot/
-.deepseek/
-.droid/
-.fallow/
-.gemini/
-.kilo/
-.kilocode/
-.mistral/
-.opencode/
-.qoder/
-.qwen/
-.vibe/
+.aider
+.amazonq
+.augmith
+.agent
+.agents
+.bolt
+.charliepython
+.claude
+.cline
+.codex
+.copilot
+.continue
+.crush
+.cursor
+.devin
+.fallow
+.gemini
+.gptscript
+.jina
+.kilo
+.kilocode
+.maestro
+.mistral
+.manus
+.midjourney
+.nexus
+.opencode
+.perplexity
+.pi
+.qoder
+.qwen
+.replit
+.starcode
+.supercursor
+.vibe
+.windsurf
+.xai
 
 # ----------------------------------------------------------------------
 # Environment & Secrets
