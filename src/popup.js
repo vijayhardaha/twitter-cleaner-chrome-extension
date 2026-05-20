@@ -63,7 +63,13 @@ async function ensureProfilePage(action = null) {
   if (username) {
     const domain = tab.url?.includes('twitter.com') ? 'twitter.com' : 'x.com';
     const path =
-      action === 'unlike' ? `/${username}/likes` : action === 'replies' ? `/${username}/with_replies` : `/${username}`;
+      action === 'unlike'
+        ? `/${username}/likes`
+        : action === 'replies'
+          ? `/${username}/with_replies`
+          : action === 'unfollow'
+            ? `/${username}/following`
+            : `/${username}`;
     await chrome.tabs.update(tab.id, { url: `https://${domain}${path}` });
     return new Promise((resolve) => setTimeout(() => resolve(true), 2000));
   }
@@ -114,6 +120,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const startUnlikeBtn = document.getElementById('startUnlike');
   const startUnrepostBtn = document.getElementById('startUnrepost');
   const startDeleteRepliesBtn = document.getElementById('startDeleteReplies');
+  const startUnfollowBtn = document.getElementById('startUnfollow');
 
   startDeleteBtn.addEventListener('click', async () => {
     if (!(await ensureProfilePage())) {
@@ -190,11 +197,28 @@ document.addEventListener('DOMContentLoaded', () => {
     chrome.tabs.sendMessage(tab.id, { action: 'startDeleteReplies' });
   });
 
+  startUnfollowBtn.addEventListener('click', async () => {
+    if (!(await ensureProfilePage('unfollow'))) {
+      updateStats('Redirecting to following...');
+      return;
+    }
+
+    currentAction = 'unfollow';
+    disableActionButtons(true);
+    startTime = Date.now();
+    actionStats = { ...actionStats, unfollowed: 0, found: 0 };
+    updateStats('Starting unfollow...');
+
+    const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+    chrome.tabs.sendMessage(tab.id, { action: 'startUnfollow' });
+  });
+
   function disableActionButtons(disabled) {
     startDeleteBtn.disabled = disabled;
     startUnlikeBtn.disabled = disabled;
     startUnrepostBtn.disabled = disabled;
     startDeleteRepliesBtn.disabled = disabled;
+    startUnfollowBtn.disabled = disabled;
     stopActionBtn.disabled = !disabled;
   }
 
